@@ -1,0 +1,72 @@
+<script src="https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+    $(function () {
+        if ($("#payPalPlusWall").data("modal-loaded") == true)
+        {
+            // Modal is already loaded
+        }
+        else
+        {
+            $("body").append(" " +
+                "<div class=\"modal fade in\" id=\"payPalPlusWall\" data-backdrop=\"static\"> " +
+                "<div class=\"modal-dialog\" role=\"dialog\">"+
+                "<div class=\"modal-content\">"+
+
+                "<div class=\"modal-header\">" +
+                "<h4 class=\"modal-title\">\{{ trans("PayPal::PayPal.myAccountChooseNewPayment") }}</h4>" +
+                "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">" +
+                "<span aria-hidden=\"true\">x</span>" +
+                "</button>" +
+                "</div>" +
+
+                "<div class=\"modal-body\">" +
+                "Loading ... please wait" +
+                "</div>" +
+
+                "</div>" +
+                "</div>" +
+                "</div>");
+
+            $("#payPalPlusWall").data("modal-loaded", true);
+        }
+
+        $("[id^='reinitPayPal-']").click(function () {
+            $(this).prop('disabled', true);
+            var orderId = $(this).attr('id').split('-')[1];
+            $.get("/payment/payPal/payOrderNow/"+orderId, function(data)
+            {
+                window.location = data;
+            });
+        });
+
+        $("[id^='reinitPayPalPlus-']").click(function () {
+            var orderId = $(this).attr('id').split('-')[1];
+            $.get("/payment/payPalPlus/paymentOrderWall/"+orderId, function(data)
+            {
+                $('#payPalPlusWall .modal-body').html(data);
+            });
+        });
+    });
+
+
+    document.addEventListener('historyPaymentMethodChanged', e => {
+        for(let property in e.detail.newOrder.order.properties){
+            if(e.detail.newOrder.order.properties[property].typeId === 3){
+                if (e.detail.newOrder.order.properties[property].value == {{ mopIds.pp }}) {
+                    document.getElementById("reinitPayPal-" + e.detail.oldOrder.id).style.display = "block";
+                }else {
+                    document.getElementById("reinitPayPal-" + e.detail.oldOrder.id).style.display = "none";
+                }
+
+                if (e.detail.newOrder.order.properties[property].value == {{ mopIds.ppp }}) {
+                    document.getElementById("reinitPayPalPlus-" + e.detail.oldOrder.id).style.display = "block";
+                }else {
+                    document.getElementById("reinitPayPalPlus-" + e.detail.oldOrder.id).style.display = "none";
+                }
+            }
+        }
+
+    });
+
+</script>

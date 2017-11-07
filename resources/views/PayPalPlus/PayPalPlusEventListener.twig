@@ -1,0 +1,63 @@
+<script type="text/javascript">
+
+
+    document.addEventListener("afterShippingCountryChanged", function(e)
+    {
+        reloadPayPalPlusWall();
+    });
+
+    document.addEventListener("afterBasketItemQuantityUpdated", function(e)
+    {
+        reloadPayPalPlusWall();
+    });
+
+    document.addEventListener("afterBasketItemRemoved", function(e)
+    {
+        reloadPayPalPlusWall();
+    });
+
+    document.addEventListener("afterShippingProfileChanged", function(e)
+    {
+        reloadPayPalPlusWall();
+    });
+
+    function reloadPayPalPlusWall()
+    {
+        $("#ppplus").html('<div class="payPalSpinner payPalLoading"></div>');
+        $.get("/payment/payPalPlusWall/refresh", function(data)
+        {
+            $('#ppplus').html(data);
+        });
+    }
+</script>
+
+<style>
+    .payPalSpinner.payPalLoading {
+        padding: 50px;
+        position: relative;
+        text-align: center;
+    }
+
+    .payPalSpinner.payPalLoading:before {
+        content: "";
+        height: 30px;
+        width: 30px;
+        margin: -15px auto auto -15px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        border-width: 8px;
+        border-style: solid;
+        border-color: #2180c0 #ccc #ccc;
+        border-radius: 100%;
+        animation: rotation .7s infinite linear;
+    }
+
+    @keyframes rotation {
+        from {
+            transform: rotate(0deg);
+        } to {
+              transform: rotate(359deg);
+          }
+    }
+</style>

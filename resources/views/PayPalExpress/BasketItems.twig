@@ -1,0 +1,37 @@
+{% for item in basketData.basket.basketItems %}
+    {% if item.variationId > 0 %}
+        {% set currentVariationId = item.variationId | trimNewlines %}
+        <article class="cmp cmp-order-item">
+            <a href="{{ basketData.itemURLs | getObjectValue(currentVariationId) }}" class="item-image">
+                <img alt="{{ basketData.itemNames | getObjectValue(currentVariationId) }}" src="{{ basketData.itemImages | getObjectValue(currentVariationId) }}">
+            </a>
+            <div class="item-details small">
+                <a href="{{ basketData.itemURLs | getObjectValue(currentVariationId)  }}" class="clearfix">
+                    <div class="item-name">
+                        {{ basketData.itemNames | getObjectValue(currentVariationId) }}
+                    </div>
+                </a>
+                <div class="row">
+                    <strong class="col-xs-6 col-sm-3">{{ trans("Ceres::Template.orderPricePerPiece") }}</strong>
+                    <span class="col-xs-6 col-sm-9">{{ item.price | formatMonetary( basketData.basket.currency ) }}</span>
+                </div>
+                <div class="row">
+                    <strong class="col-xs-6 col-sm-3">{{ trans("Ceres::Template.orderPeace") }}</strong>
+                    <span class="col-xs-6 col-sm-9">{{ item.quantity }}</span>
+                </div>
+                <div class="row">
+                    <strong class="col-xs-6 col-sm-3">{{ trans("Ceres::Template.orderTotal") }}</strong>
+                    <strong class="col-xs-6 col-sm-9">{{ (item.quantity * item.price) | formatMonetary( basketData.basket.currency ) }}</strong>
+                </div>
+                {% if item.orderProperties %}
+                    {% for property in item.orderProperties %}
+                        <div class="row">
+                            <strong class="col-xs-6 col-sm-3">{{ property.name }}</strong>
+                            <span class="col-xs-6 col-sm-9">{{ property.value }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </article>
+    {% endif %}
+{% endfor %}

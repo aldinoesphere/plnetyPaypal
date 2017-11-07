@@ -1,0 +1,41 @@
+{
+    "name": "PayPal",
+    "namespace": "PayPal",
+    "type": "payment",
+    "version": "1.2.1",
+    "license": "AGPL-3.0",
+    "pluginIcon": "icon_plugin_xs.png",
+    "price": 0.00,
+    "description": "The official PayPal plugin for plentymarkets",
+    "shortDescription":{ "de":"Das offizielle, von plentymarkets entwickelte PayPal-Plugin für den Webshop Ceres und andere Template-Plugins.", "en":"The official PayPal plugin developed by plentymarkets for the online store Ceres and other template plugins."},
+    "categories":["3519"],
+    "keywords": ["paypal", "official", "plentymarkets", "payment"],
+    "author": "plentymarkets GmbH",
+    "authorIcon": "icon_author_xs.png",
+    "serviceProvider": "PayPal\\Providers\\PayPalServiceProvider",
+    "containers": [],
+    "javaScriptFiles": [],
+    "require": [],
+    "dependencies":{
+        "paypal/rest-api-sdk-php":"*"
+    },
+    "runOnBuild": [
+        "PayPal\\Migrations\\CreatePaymentMethod",
+        "PayPal\\Migrations\\CreatePayPalTables"
+    ],
+    "dataProviders": [
+        {"key":"PayPal\\Providers\\Icon\\IconProvider", "name":"PayPal icon", "description":"Display the icon for this payment method"},
+        {"key":"PayPal\\Providers\\DataProvider\\PayPalScriptsDataProvider", "name":"PayPal Scripts", "description": "Different Scripts for the PayPal Payment Methods"},
+        {"key":"PayPal\\Providers\\DataProvider\\PayPalExpressButtonDataProvider", "name":"PayPal Express Button", "description": "PayPal Express Button"},
+        {"key":"PayPal\\Providers\\DataProvider\\PayPalPlusPaymentWallDataProvider", "name":"PayPal Plus Wall", "description": "To Show the PayPal Plus Wall"},
+
+        {"key":"PayPal\\Providers\\DataProvider\\Installment\\PayPalInstallmentGenericPromotion", "name":"PayPal Installment Generic Promotion", "description": "PayPal Installment Generic Promotion"},
+        {"key":"PayPal\\Providers\\DataProvider\\Installment\\PayPalInstallmentSpecificPromotion", "name":"PayPal Installment Specific Promotion", "description": "PayPal Installment Specific Promotion"},
+        {"key":"PayPal\\Providers\\DataProvider\\Installment\\PayPalInstallmentFinancingCheck", "name":"PayPal Installment Financing Check", "description": "Display the PayPal Installment Financing Check"},
+        {"key":"PayPal\\Providers\\DataProvider\\Installment\\PayPalInstallmentFinancingCosts", "name":"PayPal Installment Financing Costs", "description": "Display the PayPal Installment Financing Costs"},
+        {"key":"PayPal\\Providers\\DataProvider\\Installment\\PayPalInstallmentPrepareButton", "name":"PayPal Installment Prepare Button", "description": "Display the PayPal Installment Prepare Button"},
+        {"key":"PayPal\\Providers\\DataProvider\\PayPalReinitializePayment", "name":"PayPal Reinitialize Payment", "description": "Display the PayPal Button after the Payment changed to PayPal"},
+        {"key":"PayPal\\Providers\\DataProvider\\PayPalPlusReinitializePayment", "name":"PayPalPlus Reinitialize Payment", "description": "Display the PayPalPlus Wall after the Payment changed to PayPalPlus"},
+        {"key":"PayPal\\Providers\\DataProvider\\PayPalReinitializePaymentScript", "name":"PayPal Reinitialize Payment Script", "description": "A Script for displaying the PayPal Button after the Payment changed to PayPal"}
+    ]
+}

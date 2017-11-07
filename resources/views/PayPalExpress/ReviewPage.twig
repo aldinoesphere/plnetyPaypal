@@ -1,0 +1,244 @@
+{% extends getPartial('page-design') %}
+
+{% block PartialHead %}
+    <title>{{ trans("PayPal::PayPal.expressCheckoutReview") }}</title>
+{% endblock %}
+
+{% block PageBody %}
+
+    <div class="page-content checkout container-max">
+        <div class="row m-b-3">
+            <div class="col-xs-12">
+                <h1 class="h2">{{ trans("PayPal::PayPal.expressCheckoutOverview") }}</h1>
+                <p>{{ trans("PayPal::PayPal.expressCheckoutOverviewDesc") }}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-7">
+                <div class="main-col">
+                    <header class="m-b-1">
+                        <h3>{{ trans("PayPal::PayPal.orderInvoiceAddress") }}</h3>
+                    </header>
+                    <div class="invoice-addresses-select">
+                        <div>
+                            <div class="cmp cmp-address-list m-b-3">
+                                <div class="dropdown items">
+                                    <div>
+                                        <div class="item-inner">
+                                            <span class="item-content">
+                                                <div>
+                                                    {% if data.billingAddress.name1 and data.billingAddress.name1.length > 0 %}<strong>{{ data.billingAddress.name1 }}</strong>{% endif %}
+                                                    <strong>{{ data.billingAddress.name2 }} {{ data.billingAddress.name3 }}</strong>
+                                                    <span>{{ data.billingAddress.address1 }} {{ data.billingAddress.address2 }}</span>
+                                                    <span>{{ data.billingAddress.postalCode }} {{ data.billingAddress.town }}</span>
+                                                    <span>{{ data.billingAddress.country.name }}</span>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <header class="m-b-1">
+                        <h3>{{ trans("PayPal::PayPal.orderShippingAddress") }}</h3>
+                    </header>
+                    <div class="shipping-addresses-select">
+                        <div>
+                            <div class="cmp cmp-address-list m-b-3">
+                                <div class="dropdown items">
+                                    <div>
+                                        <div class="item-inner">
+                                            {% if  data.billingAddress.id == data.deliveryAddress.id %}
+                                                <span>
+                                                    <p class="text-muted small font-italic p-t-1">- {{ trans("PayPal::PayPal.addressSameAsInvoice") }}</p>
+                                                </span>
+                                            {% else %}
+                                                <span class="item-content">
+                                                    <div>
+                                                        {% if data.deliveryAddress.name1 and data.deliveryAddress.name1.length > 0 %}<strong>{{ data.deliveryAddress.name1 }}</strong>{% endif %}
+                                                        <strong>{{ data.deliveryAddress.name2 }} {{ data.deliveryAddress.name3 }}</strong>
+                                                        <span>{{ data.deliveryAddress.address1 }} {{ data.deliveryAddress.address2 }}</span>
+                                                        <span>{{ data.deliveryAddress.postalCode }} {{ data.deliveryAddress.town }}</span>
+                                                        <span>{{ data.deliveryAddress.country.name }}</span>
+                                                    </div>
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <header class="m-b-1">
+                        <h3>{{ trans("PayPal::PayPal.orderShippingProfile") }}</h3>
+                    </header>
+                    <div class="shipping-method-select">
+                        <div class="cmp cmp-method-list list m-b-3">
+                            <ul class="method-list">
+                                <li class="method-list-item" data-id="{{ data.basket.shippingProfileId }}">
+                                    <input type="radio"
+                                           name="ShippingProfileID"
+                                           value="{{ data.basket.shippingProfileId }}"
+                                           id="ShippingProfileID_{{ data.basket.shippingProfileId }}"
+                                           checked>
+                                    <label for="ShippingProfileID_{{ data.basket.shippingProfileId }}">
+                                        <div class="icon">
+                                            {#<img src="">#}
+                                        </div>
+                                        <div class="content" style="width:calc(100% - 5rem) !important;">
+                                            {{ data.shippingProvider }} - {{ data.shippingProfileName }}
+                                            <div>
+                                                <small>
+                                                    {{ data.basket.shippingAmount | localizedcurrency(data.basket.currency) }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <header class="m-b-1">
+                        <h3>{{ trans("PayPal::PayPal.orderPaymentMethod") }}</h3>
+                    </header>
+                    <div class="payment-method-select">
+                        <div class="cmp cmp-method-list list m-b-3">
+                            <ul class="method-list">
+                                <li class="method-list-item" data-id="{{ data.basket.methodOfPaymentId }}">
+                                    <input
+                                            type="radio"
+                                            id="paymentMethod_{{ data.basket.methodOfPaymentId }}"
+                                            name="MethodOfPaymentID"
+                                            value="{{ data.basket.methodOfPaymentId }}"
+                                            checked >
+                                    <label for="paymentMethod_{{ data.basket.methodOfPaymentId }}">
+                                        <div class="icon">
+                                            <div class="square-container">
+                                                <div class="square-inner center-xy">
+                                                    <img alt="{{ data.paymentMethodName }}" src="{{ data.paymentMethodIcon }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="content" style="width:calc(100% - 5rem) !important;">
+                                            {{ data.paymentMethodName }}
+                                        </div>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="confirmation-order-list">
+                    {% include 'PayPal::PayPalExpress.BasketItems' with { basketData: data } %}
+                </div>
+                <div class="gesamtsumme">
+                    <basket-totals template="#vue-basket-totals" :config="{{ config("Ceres.basket.data")|split(', ')|json_encode() }}"></basket-totals>
+                </div>
+            </div>
+
+        </div>
+
+        <hr>
+        <div class="row">
+            <div class="col-xs-12 col-sm-7">
+                <div class="form-check">
+                    <label class="form-check-label" for="gtc-accept">
+                        <input class="form-check-input" type="checkbox" value="" id="gtc-accept" onchange="changeGTC()">
+                        {% autoescape false %}
+                            {% set gtcContent %}
+                                <a href="/gtc" target="_blank">
+                                    <strong>{{ trans("PayPal::PayPal.generalGtc") }}</strong>
+                                </a>
+                            {% endset %}
+
+                            {% set cancellationContent %}
+                                <a href="/cancellation-rights" target="_blank">
+                                    <strong>{{ trans("PayPal::PayPal.generalCancellationRight") }}</strong>
+                                </a>
+                            {% endset %}
+
+                            {% set policyContent %}
+                                <a href="/privacy-policy" target="_blank">
+                                    <strong>{{ trans("PayPal::PayPal.generalPrivacyPolicy") }}</strong>
+                                </a>
+                            {% endset %}
+
+                            {{ trans("PayPal::PayPal.generalChooseOur", {"gtc": gtcContent, "cancellation": cancellationContent, "policy": policyContent}) }}
+                        {% endautoescape %}
+                    </label>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12">
+                <a href="/place-order">
+                    <button class="btn btn-primary btn-right" id="place_pp_order" disabled="true" onclick="return checkGTC()">
+                        <i class="fa fa-arrow-right" aria-hidden="true"></i> {{ trans("PayPal::PayPal.orderBuyNow") }}
+                    </button>
+                </a>
+                <button type="button" class="btn btn-secondary btn-right" style="margin-right: 15px;" data-toggle="modal" data-target="#modalPayPalExpressCheckoutCancel">
+                    <i class="fa fa-times" aria-hidden="true"></i> {{ trans("PayPal::PayPal.generalCancel") }}
+                </button>
+
+                <script type="text/javascript">
+                    function checkGTC()
+                    {
+                        if ($("#gtc-accept").prop("checked") === true)
+                        {
+                            $("#gtc-accept").parent().removeClass("error");
+                            $("#place_pp_order").attr('disabled', true);
+                            return true;
+                        }
+                        else
+                        {
+                            $("#gtc-accept").parent().addClass("error");
+                            $("#place_pp_order").attr('disabled', false);
+                            return false;
+                        }
+                    }
+
+                    function changeGTC()
+                    {
+                        if ($("#gtc-accept").prop("checked") === true)
+                        {
+                            $("#place_pp_order").attr('disabled', false);
+                        }
+                        else
+                        {
+                            $("#place_pp_order").attr('disabled', true);
+                        }
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="modalPayPalExpressCheckoutCancel" class="modal fade" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h2>{{ trans('PayPal::PayPal.cancelOrderQuestion') }}</h2>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-error pull-left" data-dismiss="modal">
+                        {{ trans('PayPal::PayPal.continueCheckout') }}
+                    </button>
+                    <a href="/payment/payPal/expressCheckoutCancel">
+                        <button type="button" class="btn btn-secondary btn-right" style="margin-right: 15px;">
+                            {{ trans('PayPal::PayPal.cancelCheckout') }}
+                        </button>
+                    </a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+{% endblock %}
